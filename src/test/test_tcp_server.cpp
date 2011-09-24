@@ -1,16 +1,16 @@
 #include <iostream>
 #include <csignal>
-
-#include <http_server.h>
+	
+#include <tcp_server.h>
 
 using namespace std;
-using namespace scalebit::http;
+using namespace simplenet;
 
-HttpServer server(8080, 8);
+TcpServer server(8181, new string("localhost"));
 
 int main() {
 
-  cout << "GALEWHALE" << endl;
+  cout << "Tcp Sever Test" << endl;
   
   struct sigaction sigIntHandler;
   sigIntHandler.sa_handler = [] (int signal) {
@@ -20,7 +20,9 @@ int main() {
   sigIntHandler.sa_flags = 0;
   sigaction(SIGINT, &sigIntHandler, NULL);
 
-  server.start();
+  server.start([](ClientHandle::ptr client_handle) {
+    cout << "got a connection from: " << *client_handle->get_address() << endl;
+  });
 
   return EXIT_SUCCESS;
 }
